@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="gcm.play.android.samples.com.gcmquickstart">
+
+    <!-- [START gcm_permission] -->
+    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+    <uses-permission android:name="com.google.android.c2dm.permission.SEND" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
+
+    <permission
+        android:name="gcm.play.android.samples.com.gcmquickstart.permission.C2D_MESSAGE"
+        android:protectionLevel="signature" />
+
+    <uses-permission android:name="gcm.play.android.samples.com.gcmquickstart.permission.C2D_MESSAGE" />
+    <!-- [END gcm_permission] -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.RECEIVE_SMS" />
+    <uses-permission android:name="android.permission.READ_SMS" />
+    <uses-permission android:name="android.permission.SEND_SMS" />
+
+    <!-- <uses-permission android:name="android.permission.BROADCAST_SMS"/> -->
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme">
+        <activity
+            android:name=".MainActivity"
+            android:label="@string/app_name">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <receiver
+            android:name=".ReplyReceive"
+            android:permission="android.permission.BROADCAST_SMS">
+            <intent-filter android:priority="1000">
+                <action android:name="android.provider.Telephony.SMS_RECEIVED"> <!-- .SMS_RECEIVED  .SMS_DELIVER_ACTION .SMS_DELIVER .SMS_RECEIVED_ACTION -->
+                </action>
+            </intent-filter>
+        </receiver>
+        <!-- [START gcm_receiver] -->
+        <receiver
+            android:name="com.google.android.gms.gcm.GcmReceiver"
+            android:exported="true"
+            android:permission="com.google.android.c2dm.permission.SEND">
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+
+                <category android:name="gcm.play.android.samples.com.gcmquickstart" />
+            </intent-filter>
+        </receiver>
+        <!-- [END gcm_receiver] -->
+
+
+        <!-- [START gcm_listener] -->
+        <service
+            android:name=".MyGcmListenerService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+            </intent-filter>
+        </service>
+        <!-- [END gcm_listener] -->
+        <!-- [START instanceId_listener] -->
+        <service
+            android:name=".MyInstanceIDListenerService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.android.gms.iid.InstanceID" />
+            </intent-filter>
+        </service>
+        <!-- [END instanceId_listener] -->
+        <service
+            android:name=".RegistrationIntentService"
+            android:exported="false" />
+
+        <activity
+            android:name=".VerifyPhoneActivity"
+            android:label="@string/title_activity_verify_phone"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".VerifyCodeActivity"
+            android:label="@string/title_activity_verify_code"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".TabsActivity"
+            android:label="@string/title_activity_tabs"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".RequestSentActivity"
+            android:label="@string/title_activity_request_sent"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".RequestSendToActivity"
+            android:label="@string/title_activity_request_send_to"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".RequestActivity"
+            android:label="@string/title_activity_request"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".ContactActivity"
+            android:label="@string/title_activity_contact"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".ChatActivity"
+            android:label="@string/title_activity_chat"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".AllowToShareActivity"
+            android:label="@string/title_activity_allow_to_share"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".Main2Activity"
+            android:label="@string/title_activity_main2"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+    </application>
+
+</manifest>

@@ -56,7 +56,16 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse {
         super.onCreate(savedInstanceState);
 
 
-  //      LocalBroadcastManager.getInstance(this).registerReceiver(replyReceive,
+
+//        sharedPreferences.edit().putString("Pid", "1").commit();
+
+
+
+
+
+
+
+        //      LocalBroadcastManager.getInstance(this).registerReceiver(replyReceive,
   //              new IntentFilter("com.receive"));
 
 
@@ -70,6 +79,12 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse {
             public void onReceive(Context context, Intent intent) {
                 mRegistrationProgressBar.setVisibility(ProgressBar.GONE);
                sharedPreferences =    PreferenceManager.getDefaultSharedPreferences(context);
+
+
+
+
+
+
                 boolean sentToken = sharedPreferences
                         .getBoolean(QuickstartPreferences.SENT_TOKEN_TO_SERVER, false);
                 if (sentToken) {
@@ -154,8 +169,8 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse {
     }
 
     @Override
-    public void onProcessCompelete(String result) {
-        Toast.makeText(MainActivity.this, "result received: "+result,
+    public void onProcessCompelete(Object result) {
+        Toast.makeText(MainActivity.this, "result received: "+ (String)result,
                 Toast.LENGTH_LONG).show();
     }
 }

@@ -11,9 +11,12 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import Utils.webservices.AsyncResponse;
+import Utils.webservices.RequestExecutor;
 
-public class AllowToShareActivity extends AppCompatActivity {
-    String name,phone;
+
+public class AllowToShareActivity extends AppCompatActivity implements AsyncResponse {
+    String name,phone,Sid;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -35,8 +38,17 @@ public class AllowToShareActivity extends AppCompatActivity {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         name = prefs.getString("name", null);
         phone = prefs.getString("phone", null);
-        TextView text=(TextView) findViewById(R.id.shareText);
-        text.setText(name +" ( "+phone+" ) is allowed to Share you phone ");
+        Sid=prefs.getString(QuickstartPreferences.Sid, null);
+
+//        TextView text=(TextView) findViewById(R.id.shareText);
+//        text.setText(Sid +" ( "+phone+" ) is allowed to Share you phone ");
+
+
+        RequestExecutor re = new RequestExecutor(this);
+        re.delegate = this;
+        re.execute("1",Sid);
+
+
 
 
         Button btn= (Button) findViewById(R.id.Btn);
@@ -54,4 +66,15 @@ public class AllowToShareActivity extends AppCompatActivity {
     }
 
 
+    @Override
+    public void onProcessCompelete(Object result) {
+
+
+
+        TextView text=(TextView) findViewById(R.id.shareText);
+        text.setText(" ( "+phone+" ) "+ (String) result);
+
+
+
+    }
 }

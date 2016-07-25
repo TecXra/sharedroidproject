@@ -6,6 +6,14 @@ import android.graphics.Bitmap;
  * Created by Maimoona on 6/7/2016.
  */
 public class UserSelection {
+
+
+
+
+
+
+
+
     String name;
 
     public Bitmap getThumb() {
@@ -47,5 +55,13 @@ public class UserSelection {
     }
 
 
+String id;
 
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 }

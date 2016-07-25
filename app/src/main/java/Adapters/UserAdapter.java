@@ -22,6 +22,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import Utils.webservices.UserSelection;
+import gcm.play.android.samples.com.gcmquickstart.QuickstartPreferences;
 import gcm.play.android.samples.com.gcmquickstart.R;
 import java.util.ArrayList;
 import java.util.List;
@@ -143,7 +144,8 @@ public class UserAdapter extends BaseAdapter {
                 if (radioButton.isChecked()) {
                     if (v.check != null) {
                         v.check.setChecked(false);
-                        de=data.getName();
+                        de=data.getPhone();
+                        de=de+ " : " +data.getId();
                     }
                     radioButton.setChecked(true);
                     v.check = radioButton;
@@ -157,8 +159,8 @@ public class UserAdapter extends BaseAdapter {
                     data.setRadioButton(false);
                 }
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(_c);
-                prefs.edit().putString("name", data.getName()).commit();
                 prefs.edit().putString("phone", data.getPhone()).commit();
+                prefs.edit().putString(QuickstartPreferences.Sid, data.getId()).commit();
 
                 /*Intent intent = new Intent(this, ContactActivity.class);
                 intent.putExtra("Selected_Item", selectedItemData);

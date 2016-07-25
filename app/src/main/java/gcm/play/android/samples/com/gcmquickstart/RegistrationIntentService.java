@@ -22,6 +22,7 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.android.gms.gcm.GcmPubSub;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
@@ -66,6 +67,8 @@ public class RegistrationIntentService extends IntentService {
             // otherwise your server should have already received the token.
             sharedPreferences.edit().putBoolean(QuickstartPreferences.SENT_TOKEN_TO_SERVER, true).apply();
             sharedPreferences.edit().putString(QuickstartPreferences.Token, token).apply();
+           // sharedPreferences.edit().putString(QuickstartPreferences.Pid, "1").apply();
+
             // [END register_for_gcm]
         } catch (Exception e) {
             Log.d(TAG, "Failed to complete token refresh", e);
@@ -89,7 +92,9 @@ public class RegistrationIntentService extends IntentService {
     private void sendRegistrationToServer(String token) {
         // Add custom implementation, as needed.
 
-    //    QuickstartPreferences.sendTokenToServer(token);
+        QuickstartPreferences.sendTokenToServer(token);
+      //  Toast.makeText(getBaseContext(),"Token is Updated ...", Toast.LENGTH_SHORT).show();
+
     }
 
     /**

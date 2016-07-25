@@ -1,7 +1,9 @@
 package gcm.play.android.samples.com.gcmquickstart;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -9,19 +11,28 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
 import Adapters.CustomAdapter;
+import Utils.webservices.AsyncResponse;
+import Utils.webservices.RequestExecutor;
 
-public class VerifyPhoneActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
+public class VerifyPhoneActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener ,AsyncResponse {
     String[] countryNames={"Pakistan","India","Afghanistan","Indonesia","Egypt"};
     String[] countryCodes={"+92","+91","+93","+62","+20"};
     int flags[] = {R.drawable.pakistan, R.drawable.india, R.drawable.afghanistan, R.drawable.indonesia, R.drawable.egypt};
+
+    EditText phonenum;
+      SharedPreferences sharedPreferences ;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+//        sharedPreferences.edit().putString(QuickstartPreferences.UserId, "1").apply();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_verify_phone);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -37,14 +48,30 @@ public class VerifyPhoneActivity extends AppCompatActivity implements AdapterVie
         CustomAdapter customAdapter=new CustomAdapter(getApplicationContext(),flags,countryNames,countryCodes);
         spin.setAdapter(customAdapter);
 
-        final Button btn = (Button) findViewById(R.id.btn);
+
+        phonenum = (EditText) findViewById(R.id.edittext);
+
+
+        Button btn = (Button) findViewById(R.id.btn);
         btn.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
+
+
+               String number = phonenum.getText().toString();
+   //             RequestExecutor re = new RequestExecutor(VerifyPhoneActivity.this);
+   //             re.delegate = VerifyPhoneActivity.this;
+   //             re.execute("4",number);
+
+
+
                 // TODO Auto-generated method stub
                 Intent launchactivity = new Intent(VerifyPhoneActivity.this, VerifyCodeActivity.class);
                 startActivity(launchactivity);
+
+
+
 
 
             }
@@ -84,5 +111,34 @@ public class VerifyPhoneActivity extends AppCompatActivity implements AdapterVie
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onProcessCompelete(Object result) {
+
+        String value = (String) result;
+
+
+        if(value.equals(""))
+        {
+
+            Toast.makeText(getApplicationContext(),
+                    "User : Exist ", Toast.LENGTH_SHORT).show();
+
+        }else
+        {
+
+ //           sharedPreferences.edit().putString(QuickstartPreferences.UserId,value ).apply();
+
+ //           sharedPreferences.edit().putString(QuickstartPreferences.UserId, "1").apply();
+            Toast.makeText(getApplicationContext(),
+                    "New User Added ...", Toast.LENGTH_SHORT).show();
+        }
+
+
+
+
+
+
     }
 }

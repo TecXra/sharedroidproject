@@ -11,5 +11,6 @@ public class ChatMessage {
         super();
         this.left = left;
         this.message = message;
+
     }
 }

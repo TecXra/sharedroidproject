@@ -1,12 +1,10 @@
 package Utils.webservices;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.http.Consts;
-import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
@@ -20,6 +18,9 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.client.LaxRedirectStrategy;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import android.content.Context;
 import android.os.AsyncTask;
@@ -39,52 +40,185 @@ public class RequestExecutor extends AsyncTask<Object, Object, Object> {
 	}
 
 	@Override
-	protected String doInBackground(Object... params) {
+	protected Object doInBackground(Object... params) {
 
 		if (Utils.isNetworkAvailable(con)) {
-			return getData(params);
-		//	return postData(params);
-		}
-		else {
+
+			if (params[0].equals("1")) {
+				return AllowSecondaryUser((String) params[1]);
+			}else if (params[0].equals("2")) {
+				return SendMessageToServer((String) params[1],(String)  params[2],(String)  params[3],(String)  params[4]);
+			}else if (params[0].equals("4")) {
+				return UserRegistration((String) params[1]);
+			}else{return "Network error";}
+
+
+
+
+		} else {
 			return "Network error";
 		}
+
 	}
 
 
 	@Override
 	protected void onPostExecute(Object result) {
-		delegate.onProcessCompelete((String) result);
+		delegate.onProcessCompelete(result);
 	};
 
 
-	public String postData(Object... params) {
+	public Object UserRegistration(String Number)
+	{
 
-		String returnData = "nothing..";
-		HttpClient httpClient = Utils.getClient();
-		HttpPost httpPost = new HttpPost(QuickstartPreferences.SERVER_HOST+QuickstartPreferences.URL_PATH); //"http://192.168.10.134/sendmessage"
-// Request parameters and other properties.
-		List<NameValuePair> nVparams = new ArrayList<NameValuePair>();
-		nVparams.add(new BasicNameValuePair("sender", "09887"));
-		nVparams.add(new BasicNameValuePair("message", "jjku"));
+
+		HttpClient httpclient = Utils.getClient();
+
+		HttpGet httpget = new HttpGet(QuickstartPreferences.SERVER_HOST+QuickstartPreferences.URL_User_Register.replace("{number}", Number));    //"http://192.168.1.100/bus"
+		String result="";
+		String jsonString = "";
 		try {
-			httpPost.setEntity(new UrlEncodedFormEntity(nVparams, "UTF-8"));
-		} catch (UnsupportedEncodingException e) {
-			// writing error to Log
+
+			HttpResponse response = httpclient.execute(httpget);
+			jsonString = EntityUtils.toString(response.getEntity());
+			JSONObject jsonObject = new JSONObject(jsonString);
+
+			result = ("" +jsonObject.getInt("id"));
+
+
+
+		} catch (JSONException e) {
+			e.printStackTrace();
+		} catch (ClientProtocolException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
-/*
- * Execute the HTTP Request
- */
-		try {
-			HttpResponse response = httpClient.execute(httpPost);
-			HttpEntity respEntity = response.getEntity();
 
-			if (respEntity != null) {
-				// EntityUtils to get the response content
-				returnData =  EntityUtils.toString(respEntity);
-				Log.i("TAG", "returnData: " + returnData);
-				Log.d("returnData",returnData);
+
+
+
+		return result;
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// by secondary
+
+	public Object SendMessageToServer(String pId,String Sid,String number,String message)
+	{
+		String jsonString = "";
+        ArrayList<Conversation> chatMessages = new ArrayList<Conversation>();
+
+		try {
+			HttpClient httpclient = Utils.getClient();
+			HttpPost httppost = new HttpPost(QuickstartPreferences.SERVER_HOST+ QuickstartPreferences.URL_SendMessagetoServer);
+
+			List<NameValuePair> formparams = new ArrayList<NameValuePair>();
+			formparams.add(new BasicNameValuePair("primary_id", pId));
+			formparams.add(new BasicNameValuePair("secondary_id", Sid));
+			formparams.add(new BasicNameValuePair("to_number", number));
+			formparams.add(new BasicNameValuePair("message", message));
+
+			httppost.setEntity(new UrlEncodedFormEntity(formparams));
+
+
+				HttpResponse response = httpclient.execute(httppost);
+				jsonString = EntityUtils.toString(response.getEntity());
+
+			JSONArray jsonArray= new JSONArray(jsonString);
+
+
+
+			for (int i = 0; i < jsonArray.length(); i++)
+			{
+				chatMessages.add(new Conversation("" + jsonArray.getJSONObject(i).getString("message"), "" + jsonArray.getJSONObject(i).getString("check")));
+
 			}
+
+
+
+
+
+				//  Log.i("sendToken"," Token :  " + _token);
+
+			httpclient.execute(httppost);
+
+		} catch (ClientProtocolException e) {
+			// writing exception to log
+			e.printStackTrace();
+		} catch (IOException e) {
+			// writing exception to log
+			e.printStackTrace();
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+
+
+		return chatMessages ;
+
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	public String AllowSecondaryUser(String SId)
+	{
+
+
+		try {
+			HttpClient httpclient = Utils.getClient();
+			HttpPost httppost = new HttpPost(QuickstartPreferences.SERVER_HOST+ QuickstartPreferences.URL_Secondary_Id_Update);
+
+			List<NameValuePair> formparams = new ArrayList<NameValuePair>();
+			formparams.add(new BasicNameValuePair("id", "1"));
+			formparams.add(new BasicNameValuePair("secondary_id", SId));
+
+			httppost.setEntity(new UrlEncodedFormEntity(formparams));
+
+			//  Log.i("sendToken"," Token :  " + _token);
+
+			httpclient.execute(httppost);
+
 		} catch (ClientProtocolException e) {
 			// writing exception to log
 			e.printStackTrace();
@@ -93,8 +227,10 @@ public class RequestExecutor extends AsyncTask<Object, Object, Object> {
 			e.printStackTrace();
 		}
 
-		return  returnData;
+		return "Approval Granted ....";
+
 	}
+
 
 	public String postData11(Object... params) {
 

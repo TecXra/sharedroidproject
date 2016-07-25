@@ -20,9 +20,11 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.telephony.gsm.SmsManager;
 import android.util.Log;
@@ -31,6 +33,8 @@ import android.widget.Toast;
 import com.google.android.gms.gcm.GcmListenerService;
 
 public class MyGcmListenerService extends GcmListenerService {
+
+    Context context;
 
     private static final String TAG = "MyGcmListenerService";
 
@@ -45,20 +49,49 @@ public class MyGcmListenerService extends GcmListenerService {
     @Override
     public void onMessageReceived(String from, Bundle data) {
 
+//send mgs to number
 
 
-        String message = data.getString("body");
+
+        String message = data.getString("messageBody");
 
         String sendTo = data.getString("sendTo");
+
         String messageBody = data.getString("messageBody");
+
+        String JPid=data.getString("JPid");
+        String JSid= data.getString("JSid");
+
+
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        String Sharenumber = prefs.getString(QuickstartPreferences.To_number,null);
+        String Pid = prefs.getString(QuickstartPreferences.Pid,null);
 
         SmsManager.getDefault().sendTextMessage(sendTo, null, messageBody, null, null);
 
 
+        if(QuickstartPreferences.CheckMode(JPid,JSid))
+        {
+            if (QuickstartPreferences.checkReplyNumber(sendTo, Sharenumber))
+            {
+//                SmsManager.getDefault().sendTextMessage(sendTo, null, messageBody, null, null);
+            }
+
+        }
+        else
+        {
+                //Secondary Task
+
+        }
+
+//        SmsManager.getDefault().sendTextMessage(sendTo, null, messageBody, null, null);
+
+
+
         Log.d(TAG, "From: " + from);
         Log.d(TAG, "Message: " + message);
-        Log.i(TAG, "messssaaaage recieved from....................." + from);
-        Log.i(TAG, "messssaaaage ******************************" + message);
+        Log.i(TAG, "sendTo....................." + sendTo);
+        Log.i(TAG, "messageBody ******************************" + messageBody);
         if (from.startsWith("/topics/")) {
             // message received from some topic.
         } else {
@@ -80,7 +113,7 @@ public class MyGcmListenerService extends GcmListenerService {
         sendNotification(message);
         // [END_EXCLUDE]
     }
-    // [END receive_message]
+// [END receive_message]
 
     /**
      * Create and show a simple notification containing the received GCM message.

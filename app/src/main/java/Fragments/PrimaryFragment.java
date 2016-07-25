@@ -1,13 +1,16 @@
 package Fragments;
 
 
+import android.annotation.TargetApi;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.ContactsContract;
@@ -25,7 +28,17 @@ import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
+import org.json.JSONException;
+
 import Adapters.UserAdapter;
+import Utils.webservices.Utils;
+import gcm.play.android.samples.com.gcmquickstart.QuickstartPreferences;
 import gcm.play.android.samples.com.gcmquickstart.R;
 import gcm.play.android.samples.com.gcmquickstart.AllowToShareActivity;
 import Utils.webservices.UserSelection;
@@ -47,12 +60,16 @@ public class PrimaryFragment extends Fragment implements View.OnClickListener {
     // Cursor to load contacts list
     Cursor phones;
 
+    Context _c;
+
+
     // Pop up
     ContentResolver resolver;
     SearchView search;
     UserAdapter adapter;
     String name,phone;
 
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.content_contact, container, false);
@@ -144,6 +161,12 @@ public class PrimaryFragment extends Fragment implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
+
+
+
+
+
+
         /*int count = listView.getChildCount();
 
         for (int i = 0; i < count; i++) {
@@ -175,6 +198,62 @@ public class PrimaryFragment extends Fragment implements View.OnClickListener {
 
         @Override
         protected Void doInBackground(Void... voids) {
+
+
+
+            HttpClient httpclient =Utils.getClient();
+
+            HttpGet httpget = new HttpGet(QuickstartPreferences.SERVER_HOST + QuickstartPreferences.URI_All_Contacts);    //"http://192.168.1.100/bus"
+
+            String jsonString = "";
+            try {
+
+                HttpResponse response = httpclient.execute(httpget);
+                jsonString = EntityUtils.toString(response.getEntity());
+                JSONArray jsonArray= new JSONArray(jsonString);
+                for (int i = 0; i < jsonArray.length(); i++)
+                {
+                    UserSelection selectUser = new UserSelection();
+                    selectUser.setPhone(jsonArray.getJSONObject(i).getString("phone_number"));
+                    selectUser.setId(""+jsonArray.getJSONObject(i).getInt("id"));
+                    selectUser.setRadioButton(false);
+
+                    selectUsers.add(selectUser);
+
+                }
+
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            } catch (ClientProtocolException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+
+            return null;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+
+
+
+
             // Get Contact list from Phone
 
             if (phones != null) {
@@ -212,6 +291,7 @@ public class PrimaryFragment extends Fragment implements View.OnClickListener {
             }
             //phones.close();
             return null;
+  */
         }
 
         @Override

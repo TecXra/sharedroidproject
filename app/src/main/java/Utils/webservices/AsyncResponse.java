@@ -3,5 +3,5 @@ package Utils.webservices;
 
 
 public interface AsyncResponse {
-	void onProcessCompelete(String result);
+	void onProcessCompelete(Object result);
 }
